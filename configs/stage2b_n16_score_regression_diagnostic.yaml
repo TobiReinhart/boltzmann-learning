@@ -1,0 +1,76 @@
+name: stage2b_n16_score_regression_diagnostic
+
+n_ip: [16]
+targets:
+  - name: IP-w1
+    kind: count_cosine
+    beta: 1.0
+    w: 1
+  - name: IP-w3
+    kind: count_cosine
+    beta: 1.0
+    w: 3
+  - name: IP-w4
+    kind: count_cosine
+    beta: 1.0
+    w: 4
+
+training_distribution: uniform
+sample_sizes: [262144]
+dataset_repetitions: 3
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+weight_bound: [8.0]
+
+models:
+  - kind: rbm
+    hidden: [560]
+    comparison_group: m3-064
+  - kind: 3rbm
+    hidden: [64]
+    pair_mode: cross
+    comparison_group: m3-064
+  - kind: rbm
+    hidden: [2242]
+    comparison_group: m3-256
+  - kind: 3rbm
+    hidden: [256]
+    pair_mode: cross
+    comparison_group: m3-256
+
+training_defaults:
+  updates: 20000
+  batch_size: 512
+  learning_rate: 0.001
+  optimizer: adam
+  record_every: 250
+  gradient_clip_norm: 10.0
+
+training:
+  - name: score-regression-lr0001
+    algorithm: score_regression
+
+checkpoints:
+  updates: [100, 250, 500, 1000, 2000, 5000, 10000, 20000]
+  ais_updates: []
+  save_parameters: true
+
+evaluation:
+  target_samples: 16384
+  pseudolikelihood_samples: 1024
+  exact_max_n: 0
+  ais_enabled: false
+  model_sample_chains: 128
+  model_sample_burn_in: 500
+  model_sample_rounds: 40
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_n16_score_regression_diagnostic

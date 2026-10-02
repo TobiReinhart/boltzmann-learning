@@ -1,0 +1,88 @@
+name: stage2b_n16_block_ip_learning
+
+n_ip: [16]
+targets:
+  - name: block-IP-k1
+    kind: block_ip
+    beta: 1.0
+    block_size: 1
+  - name: block-IP-k2
+    kind: block_ip
+    beta: 1.0
+    block_size: 2
+  - name: block-IP-k4
+    kind: block_ip
+    beta: 1.0
+    block_size: 4
+  - name: block-IP-k8
+    kind: block_ip
+    beta: 1.0
+    block_size: 8
+  - name: block-IP-k16
+    kind: block_ip
+    beta: 1.0
+    block_size: 16
+
+training_distribution: target
+sample_sizes: [262144]
+dataset_repetitions: 3
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+weight_bound: [8.0]
+
+models:
+  - kind: rbm
+    hidden: [280]
+    comparison_group: m3-032
+  - kind: 3rbm
+    hidden: [32]
+    pair_mode: cross
+    comparison_group: m3-032
+
+  - kind: rbm
+    hidden: [560]
+    comparison_group: m3-064
+  - kind: 3rbm
+    hidden: [64]
+    pair_mode: cross
+    comparison_group: m3-064
+
+training_defaults:
+  updates: 50000
+  batch_size: 512
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 500
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [100, 250, 500, 1000, 2000, 5000, 10000, 20000, 35000, 50000]
+  ais_updates: []
+  save_parameters: true
+
+evaluation:
+  target_samples: 32768
+  pseudolikelihood_samples: 2048
+  exact_max_n: 0
+  ais_enabled: false
+
+  model_sample_chains: 256
+  model_sample_burn_in: 500
+  model_sample_rounds: 40
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_n16_block_ip_learning

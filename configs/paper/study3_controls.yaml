@@ -1,0 +1,61 @@
+name: paper_study3_controls
+study_type: learning
+n_ip: [4, 8]
+targets:
+  - {name: independent-s914301, kind: benchmark, family: independent, graph_seed: 914301, beta: 1.0}
+  - {name: independent-s914302, kind: benchmark, family: independent, graph_seed: 914302, beta: 1.0}
+  - {name: mixture-s914301, kind: benchmark, family: mixture, graph_seed: 914301, beta: 1.0}
+  - {name: mixture-s914302, kind: benchmark, family: mixture, graph_seed: 914302, beta: 1.0}
+  - {name: rbm-teacher-s914301, kind: benchmark, family: rbm_teacher, graph_seed: 914301, beta: 1.0}
+  - {name: rbm-teacher-s914302, kind: benchmark, family: rbm_teacher, graph_seed: 914302, beta: 1.0}
+  - {name: random-pairwise-s914301, kind: benchmark, family: random_pairwise, graph_seed: 914301, beta: 1.0}
+  - {name: random-pairwise-s914302, kind: benchmark, family: random_pairwise, graph_seed: 914302, beta: 1.0}
+  - {name: random-table-s914301, kind: benchmark, family: random_table, graph_seed: 914301, beta: 1.0}
+  - {name: random-table-s914302, kind: benchmark, family: random_table, graph_seed: 914302, beta: 1.0}
+sample_sizes: [131072]
+dataset_repetitions: 3
+data_seed: 914301
+initialization_seed: 1014301
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_minibatches_across_training: true
+pair_evaluation_states_across_models: true
+device: auto
+dtype: float32
+weight_bound: [4.0]
+models:
+  - {kind: rbm, hidden: [132], n_ip: [4], comparison_group: P1192}
+  - {kind: 3rbm, hidden: [32], pair_mode: all, n_ip: [4], comparison_group: P1192}
+  - {kind: rbm, hidden: [516], n_ip: [8], comparison_group: P8784}
+  - {kind: 3rbm, hidden: [64], pair_mode: all, n_ip: [8], comparison_group: P8784}
+training_defaults:
+  updates: 20000
+  batch_size: 256
+  learning_rate: 0.002
+  lr_decay_start_fraction: 0.5
+  lr_final_ratio: 0.1
+  optimizer: adam
+  gradient_clip_norm: 10.0
+  record_every: 1000
+training:
+  - {name: rbm-cd1, algorithm: cd, pair_modes: [none], gibbs_steps: 1}
+  - {name: rbm-cd2, algorithm: cd, pair_modes: [none], gibbs_steps: 2}
+  - {name: all-cd1, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 1}
+  - {name: all-cd2, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 2}
+checkpoints:
+  updates: [250, 1000, 3000, 10000, 20000]
+  save_parameters: true
+  ais_updates: []
+evaluation:
+  selection_samples: 2048
+  target_samples: 8192
+  pseudolikelihood_samples: 2048
+  exact_max_n: 8
+  ais_enabled: false
+  model_sample_chains: 64
+  model_sample_burn_in: 100
+  model_sample_rounds: 10
+  model_sample_thinning: 5
+clean_output_dir: false
+output_dir: results/paper_study3_controls

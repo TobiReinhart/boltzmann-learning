@@ -1,0 +1,23 @@
+name: paper_smoke_population
+study_type: population
+n_ip: [2]
+targets:
+  - {name: global-ip, kind: ip, beta: 1.0}
+  - {name: scaffold-ip, kind: ip_cosine, beta: 1.0, w: 4, rho: 0.5}
+  - {name: two-block-ip, kind: block_ip, beta: 0.7071067811865476, block_count: 2}
+weight_bound: [4.0]
+models:
+  - {kind: rbm, hidden: [2], n_ip: [2], comparison_group: P15}
+  - {kind: 3rbm, hidden: [1], pair_mode: all, n_ip: [2], comparison_group: P15}
+  - {kind: 3rbm, hidden: [1], pair_mode: cross, n_ip: [2], comparison_group: P15}
+optimization:
+  restarts: 2
+  random_scale: 0.25
+  maxiter: 3
+  maxfun: 10
+  ftol: 1.0e-13
+  gtol: 1.0e-9
+  seed: 914001
+cpu_threads: 2
+clean_output_dir: false
+output_dir: results/paper_smoke_population

@@ -1,0 +1,65 @@
+name: stage2b_n6_learner_benchmark_20k
+
+n_ip: [6]
+beta: [1.0]
+sample_sizes: [1024, 4096, 16384]
+dataset_repetitions: 5
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+
+device: cpu
+dtype: float32
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    hidden: [30, 45]
+  - kind: 3rbm
+    hidden: [8, 12]
+    pair_mode: cross
+
+training_defaults:
+  updates: 20000
+  batch_size: 128
+  optimizer: adam
+  gibbs_steps: 1
+  persistent_chains: 128
+  record_every: 250
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0002
+    algorithm: cd
+    learning_rate: 0.002
+  - name: cd1-lr0005
+    algorithm: cd
+    learning_rate: 0.005
+  - name: pcd1-lr0002
+    algorithm: pcd
+    learning_rate: 0.002
+  - name: pcd1-lr0005
+    algorithm: pcd
+    learning_rate: 0.005
+  - name: nce-uniform-lr0002
+    algorithm: nce
+    learning_rate: 0.002
+    nce_noise_ratio: 2
+  - name: nce-uniform-lr0005
+    algorithm: nce
+    learning_rate: 0.005
+    nce_noise_ratio: 2
+
+evaluation:
+  target_samples: 8192
+  exact_max_n: 6
+  ais_enabled: false
+  model_sample_chains: 256
+  model_sample_burn_in: 200
+  model_sample_rounds: 40
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_n6_learner_benchmark_20k

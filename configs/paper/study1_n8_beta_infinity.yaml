@@ -1,0 +1,50 @@
+name: paper_study1_n8_beta_infinity
+targets:
+  - {name: global-ip, kind: ip, beta: .inf}
+study_type: learning
+n_ip: [8]
+sample_sizes: [131072]
+dataset_repetitions: 3
+data_seed: 923081
+initialization_seed: 1023081
+dataset_generation_batch_size: 65536
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_minibatches_across_training: true
+pair_evaluation_states_across_models: true
+device: mps
+cpu_threads: 2
+dtype: float32
+weight_bound: [4.0]
+models:
+  - {kind: rbm, hidden: [516], comparison_group: P8784, seed_index: 0}
+  - {kind: 3rbm, hidden: [64], pair_mode: all, comparison_group: P8784, seed_index: 1}
+training_defaults:
+  updates: 50000
+  batch_size: 256
+  learning_rate: 0.002
+  lr_decay_start_fraction: 0.5
+  lr_final_ratio: 0.1
+  optimizer: adam
+  gradient_clip_norm: 10.0
+  record_every: 1000
+training:
+  - {name: rbm-cd2, algorithm: cd, pair_modes: [none], gibbs_steps: 2, seed_index: 0}
+  - {name: all-cd2, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 2, seed_index: 1}
+checkpoints:
+  updates: [1, 250, 1000, 3000, 5000, 10000, 15000, 20000, 30000, 40000, 50000]
+  save_parameters: true
+  ais_updates: []
+evaluation:
+  selection_samples: 2048
+  target_samples: 8192
+  pseudolikelihood_samples: 2048
+  exact_max_n: 8
+  ais_enabled: false
+  model_sample_chains: 64
+  model_sample_burn_in: 100
+  model_sample_rounds: 10
+  model_sample_thinning: 5
+clean_output_dir: false
+output_dir: results/paper_study1_n8_beta_infinity

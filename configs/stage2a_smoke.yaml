@@ -1,0 +1,32 @@
+name: stage2a_smoke
+
+n_ip: [2]
+beta: [0.5]
+
+sample_sizes: [16, 64]
+dataset_repetitions: 2
+
+validation_size: 256
+data_seed: 314159
+
+weight_bound: [2.0]
+
+models:
+  - kind: rbm
+    hidden: [4]
+
+  - kind: 3rbm
+    hidden: [2]
+    pair_mode: cross
+
+optimization:
+  restarts: 2
+  random_scale: 0.25
+  maxiter: 150
+  maxfun: 300
+  ftol: 1.0e-12
+  gtol: 1.0e-8
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/stage2a_smoke

@@ -1,0 +1,55 @@
+name: stage2b_count_cosine_smoke
+n_ip: [3]
+targets:
+  - name: cosine-w1
+    kind: count_cosine
+    beta: 1.0
+    w: 1
+  - name: cosine-w3
+    kind: count_cosine
+    beta: 1.0
+    w: 3
+sample_sizes: [64]
+dataset_repetitions: 1
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.01
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+device: cpu
+dtype: float32
+weight_bound: [4.0]
+models:
+  - kind: rbm
+    hidden: [7]
+    comparison_group: smoke
+  - kind: 3rbm
+    hidden: [2]
+    pair_mode: cross
+    comparison_group: smoke
+training_defaults:
+  updates: 2
+  batch_size: 8
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 1
+  gradient_clip_norm: 10.0
+training:
+  - name: cd1
+    algorithm: cd
+checkpoints:
+  updates: [1, 2]
+  ais_updates: []
+  save_parameters: true
+evaluation:
+  target_samples: 32
+  exact_max_n: 3
+  ais_enabled: false
+  model_sample_chains: 8
+  model_sample_burn_in: 2
+  model_sample_rounds: 2
+  model_sample_thinning: 1
+clean_output_dir: true
+output_dir: results/stage2b_count_cosine_smoke

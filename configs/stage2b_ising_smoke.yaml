@@ -1,0 +1,50 @@
+name: stage2b_ising_smoke
+n_ip: [4]
+targets:
+  - {name: energy-ring-ferro, kind: ising_energy, graph: ring, couplings: ferro, graph_seed: 11, encoding: signed_product, objective: smooth, beta: 1.0}
+  - {name: ground-cycles, kind: ising_ground, graph: cycles, couplings: unit, graph_seed: 11, encoding: signed_product, objective: smooth, beta: 1.0}
+  - {name: ground-threshold, kind: ising_ground, graph: cycles, couplings: weighted, graph_seed: 11, encoding: signed_product, objective: threshold, beta: 1.0}
+sample_sizes: [128]
+dataset_repetitions: 1
+data_seed: 9142026
+initialization_seed: 3812026
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_minibatches_across_training: true
+pair_evaluation_states_across_models: true
+device: auto
+dtype: float32
+weight_bound: [8.0]
+models:
+  - {kind: rbm, hidden: [12], comparison_group: smoke}
+  - {kind: 3rbm, hidden: [3], pair_mode: all, comparison_group: smoke}
+
+training_defaults:
+  updates: 4
+  batch_size: 16
+  learning_rate: 0.002
+  optimizer: adam
+  record_every: 1
+  gradient_clip_norm: 10.0
+training:
+  - {name: rbm-cd1, algorithm: cd, pair_modes: [none], gibbs_steps: 1}
+  - {name: rbm-cd2, algorithm: cd, pair_modes: [none], gibbs_steps: 2}
+  - {name: all-block4-cd1, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 1}
+  - {name: all-block4-cd2, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 2}
+
+checkpoints:
+  updates: [1, 2, 4]
+  ais_updates: []
+  save_parameters: true
+evaluation:
+  target_samples: 128
+  pseudolikelihood_samples: 32
+  exact_max_n: 4
+  ais_enabled: false
+  model_sample_chains: 16
+  model_sample_burn_in: 2
+  model_sample_rounds: 2
+  model_sample_thinning: 1
+clean_output_dir: true
+output_dir: results/stage2b_ising_smoke

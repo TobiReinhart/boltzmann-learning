@@ -1,0 +1,40 @@
+name: stage2a_n6_small_crossover_reference
+
+n_ip: [6]
+beta: [1.0]
+
+sample_sizes: [64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
+dataset_repetitions: 3
+
+validation_size: 32768
+data_seed: 314159
+
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    hidden: [15, 30, 45, 60]
+    population_reference:
+      source_dir: results/stage1_n6_small_parameter_matched
+      initialize: true
+      perturb_scale: 0.01
+
+  - kind: 3rbm
+    hidden: [4, 8, 12, 16]
+    pair_mode: cross
+    population_reference:
+      source_dir: results/stage1_n6_small_parameter_matched
+      initialize: true
+      perturb_scale: 0.01
+
+optimization:
+  restarts: 2
+  random_scale: 0.1
+  maxiter: 5000
+  maxfun: 7500
+  ftol: 1.0e-12
+  gtol: 1.0e-8
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/stage2a_n6_small_crossover_reference

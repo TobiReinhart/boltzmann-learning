@@ -1,0 +1,68 @@
+name: stage2b_ip_cosine_smoke
+
+n_ip: [4]
+targets:
+  - name: hybrid-rho0p5-w2
+    kind: ip_cosine
+    beta: 1.0
+    w: 2
+    rho: 0.5
+  - name: block-q2-L2
+    kind: block_ip
+    beta: 1.0
+    block_count: 2
+
+training_distribution: target
+sample_sizes: [64]
+dataset_repetitions: 1
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: cpu
+dtype: float32
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    hidden: [3]
+    comparison_group: smoke
+  - kind: 3rbm
+    hidden: [1]
+    pair_mode: cross
+    comparison_group: smoke
+
+training_defaults:
+  updates: 4
+  batch_size: 8
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 1
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [2, 4]
+  ais_updates: []
+  save_parameters: false
+
+evaluation:
+  target_samples: 64
+  pseudolikelihood_samples: 32
+  exact_max_n: 4
+  ais_enabled: false
+  model_sample_chains: 16
+  model_sample_burn_in: 2
+  model_sample_rounds: 3
+  model_sample_thinning: 1
+
+clean_output_dir: true
+output_dir: results/stage2b_ip_cosine_smoke

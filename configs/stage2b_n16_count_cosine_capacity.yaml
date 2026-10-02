@@ -1,0 +1,98 @@
+name: stage2b_n16_count_cosine_capacity
+
+n_ip: [16]
+targets:
+  - name: cosine-w1
+    kind: count_cosine
+    beta: 1.0
+    w: 1
+  - name: cosine-w2
+    kind: count_cosine
+    beta: 1.0
+    w: 2
+  - name: cosine-w3
+    kind: count_cosine
+    beta: 1.0
+    w: 3
+  - name: cosine-w4
+    kind: count_cosine
+    beta: 1.0
+    w: 4
+
+sample_sizes: [262144]
+dataset_repetitions: 3
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+weight_bound: [8.0]
+
+models:
+  - kind: rbm
+    hidden: [560]
+    comparison_group: m3-064
+  - kind: 3rbm
+    hidden: [64]
+    pair_mode: cross
+    comparison_group: m3-064
+
+  - kind: rbm
+    hidden: [1121]
+    comparison_group: m3-128
+  - kind: 3rbm
+    hidden: [128]
+    pair_mode: cross
+    comparison_group: m3-128
+
+  - kind: rbm
+    hidden: [2242]
+    comparison_group: m3-256
+  - kind: 3rbm
+    hidden: [256]
+    pair_mode: cross
+    comparison_group: m3-256
+
+  - kind: rbm
+    hidden: [4484]
+    comparison_group: m3-512
+  - kind: 3rbm
+    hidden: [512]
+    pair_mode: cross
+    comparison_group: m3-512
+
+training_defaults:
+  updates: 100000
+  batch_size: 128
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 500
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [500, 2000, 5000, 10000, 25000, 50000, 75000, 100000]
+  ais_updates: []
+  save_parameters: true
+
+evaluation:
+  target_samples: 32768
+  exact_max_n: 0
+  ais_enabled: false
+
+  model_sample_chains: 256
+  model_sample_burn_in: 500
+  model_sample_rounds: 40
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_n16_count_cosine_capacity

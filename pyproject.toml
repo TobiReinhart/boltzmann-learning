@@ -1,0 +1,59 @@
+[project]
+name = "ip-rbm"
+version = "0.1.0"
+description = "Exact representability and finite-sample learning experiments for RBMs and 3RBMs"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+authors = [
+  { name = "Tobi Reinhart", email = "43352762+TobiReinhart@users.noreply.github.com" },
+]
+dependencies = [
+  "matplotlib>=3.9",
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "psutil>=7.0",
+  "pyyaml>=6.0",
+  "scipy>=1.14",
+  "seaborn>=0.13",
+  "torch>=2.7",
+  "tqdm>=4.66",
+]
+
+[project.scripts]
+ip-rbm = "ip_rbm.cli:main"
+
+[dependency-groups]
+dev = [
+  "ipykernel>=6.29",
+  "mypy>=1.15",
+  "pandas-stubs>=2.2",
+  "pre-commit>=4.2",
+  "pytest>=8.3",
+  "pytest-cov>=6.1",
+  "ruff>=0.11",
+  "scipy-stubs>=1.14",
+  "types-pyyaml>=6.0",
+  "types-seaborn>=0.13",
+  "types-tqdm>=4.66",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13"]
+build-backend = "uv_build"
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+packages = ["ip_rbm"]

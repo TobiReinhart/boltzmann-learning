@@ -1,0 +1,51 @@
+name: stage2b_n16_sampler_cdk_timing
+n_ip: [16]
+targets:
+  - {name: cosine-w4, kind: count_cosine, beta: 1.6856526327, w: 4}
+sample_sizes: [524288]
+dataset_repetitions: 1
+data_seed: 271828
+initialization_seed: 57721
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_minibatches_across_training: true
+pair_evaluation_states_across_models: true
+device: auto
+dtype: float32
+weight_bound: [8.0]
+models:
+  - {kind: 3rbm, hidden: [256], pair_mode: cross, comparison_group: P74k}
+  - {kind: 3rbm, hidden: [140], pair_mode: all, comparison_group: P74k}
+training_defaults:
+  updates: 1000
+  batch_size: 256
+  learning_rate: 0.002
+  optimizer: adam
+  record_every: 100
+  gradient_clip_norm: 10.0
+training:
+  - {name: cross-cd1, algorithm: cd, pair_modes: [cross], gibbs_steps: 1}
+  - {name: cross-cd2, algorithm: cd, pair_modes: [cross], gibbs_steps: 2}
+  - {name: cross-cd4, algorithm: cd, pair_modes: [cross], gibbs_steps: 4}
+  - {name: cached-cd1, algorithm: cd, pair_modes: [all], all_pairs_sampler: cached, gibbs_steps: 1}
+  - {name: cached-cd2, algorithm: cd, pair_modes: [all], all_pairs_sampler: cached, gibbs_steps: 2}
+  - {name: cached-cd4, algorithm: cd, pair_modes: [all], all_pairs_sampler: cached, gibbs_steps: 4}
+  - {name: block4-cd1, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, gibbs_steps: 1}
+  - {name: block4-cd2, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, gibbs_steps: 2}
+  - {name: block4-cd4, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, gibbs_steps: 4}
+  - {name: legacy-cd1, algorithm: cd, pair_modes: [all], all_pairs_sampler: legacy, gibbs_steps: 1}
+checkpoints:
+  updates: [500, 1000]
+  save_parameters: true
+evaluation:
+  target_samples: 128
+  pseudolikelihood_samples: 32
+  exact_max_n: 0
+  ais_enabled: false
+  model_sample_chains: 16
+  model_sample_burn_in: 2
+  model_sample_rounds: 2
+  model_sample_thinning: 1
+clean_output_dir: true
+output_dir: results/stage2b_n16_sampler_cdk_timing

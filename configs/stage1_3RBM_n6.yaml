@@ -1,0 +1,22 @@
+name: stage1_3RBM_n6
+
+n_ip: [6]
+beta: [1.0]
+weight_bound: [4.0]
+
+models:
+  - kind: 3rbm
+    hidden: [24, 28, 32, 34, 36, 40, 48]
+    pair_mode: cross
+
+optimization:
+  restarts: 20
+  random_scale: 0.1
+  maxiter: 20000
+  maxfun: 30000
+  ftol: 1.0e-12
+  gtol: 1.0e-8
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/stage1_3RBM_n6

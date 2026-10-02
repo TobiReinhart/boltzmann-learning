@@ -1,0 +1,49 @@
+name: paper_study1_budget_n12_timing
+study_type: learning
+n_ip: [12]
+targets:
+  - {name: global-ip, kind: ip, beta: 1.0}
+sample_sizes: [65536]
+dataset_repetitions: 1
+data_seed: 917121
+initialization_seed: 1017121
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_minibatches_across_training: true
+pair_evaluation_states_across_models: true
+device: mps
+cpu_threads: 2
+dtype: float32
+weight_bound: [4.0]
+models:
+  - {kind: rbm, hidden: [1734], comparison_group: P43368}
+  - {kind: 3rbm, hidden: [144], pair_mode: all, comparison_group: P43368}
+training_defaults:
+  updates: 100
+  batch_size: 65536
+  learning_rate: 0.001
+  lr_decay_start_fraction: 0.5
+  lr_final_ratio: 0.1
+  optimizer: adam
+  gradient_clip_norm: 10.0
+  record_every: 25
+training:
+  - {name: rbm-cd2, algorithm: cd, pair_modes: [none], gibbs_steps: 2}
+  - {name: all-cd2, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 2}
+checkpoints:
+  updates: [50, 100]
+  save_parameters: true
+  ais_updates: []
+evaluation:
+  selection_samples: 32
+  target_samples: 128
+  pseudolikelihood_samples: 32
+  exact_max_n: 0
+  ais_enabled: false
+  model_sample_chains: 8
+  model_sample_burn_in: 2
+  model_sample_rounds: 2
+  model_sample_thinning: 1
+clean_output_dir: false
+output_dir: results/paper_study1_budget_n12_timing

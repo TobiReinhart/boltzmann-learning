@@ -1,0 +1,67 @@
+name: stage2b_n16_highbeta_nce_learning
+
+n_ip: [16]
+beta: [8.0]
+sample_sizes: [1048576]
+dataset_repetitions: 3
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+
+weight_bound: [16.0]
+
+models:
+  - kind: rbm
+    hidden: [2251]
+    comparison_group: high
+  - kind: 3rbm
+    hidden: [257]
+    pair_mode: cross
+    comparison_group: high
+
+training_defaults:
+  updates: 10000
+  batch_size: 2048
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 100
+  gradient_clip_norm: 50.0
+
+training:
+  - name: cd1-lr0001
+    algorithm: cd
+    learning_rate: 0.001
+
+  - name: nce4-lr00005
+    algorithm: nce
+    learning_rate: 0.0005
+    nce_noise_ratio: 4
+  - name: nce4-lr0001
+    algorithm: nce
+    learning_rate: 0.001
+    nce_noise_ratio: 4
+
+checkpoints:
+  updates: [100, 300, 1000, 3000, 6000, 10000]
+  ais_updates: []
+  save_parameters: true
+
+evaluation:
+  target_samples: 32768
+  exact_max_n: 0
+  ais_enabled: false
+
+  model_sample_chains: 512
+  model_sample_burn_in: 1000
+  model_sample_rounds: 80
+  model_sample_thinning: 10
+
+clean_output_dir: true
+output_dir: results/stage2b_n16_highbeta_nce_learning

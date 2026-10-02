@@ -1,0 +1,24 @@
+name: local_try_7
+
+n_ip: [4, 6]
+beta: [1.0]
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    hidden: [4, 8, 16, 32, 64]
+
+  - kind: 3rbm
+    hidden: [4, 8, 16, 32, 64]
+    pair_mode: cross
+
+optimization:
+  restarts: 10
+  random_scale: 0.1
+  maxiter: 5000
+  ftol: 1.0e-12
+  gtol: 1.0e-8
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/local_try_7

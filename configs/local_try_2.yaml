@@ -1,0 +1,24 @@
+name: local_try_2
+
+n_ip: [2, 4]
+beta: [1.0]
+weight_bound: [1.0, 4.0]
+
+models:
+  - kind: rbm
+    hidden: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+  - kind: 3rbm
+    hidden: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    pair_mode: cross
+
+optimization:
+  restarts: 5
+  random_scale: 0.25
+  maxiter: 500
+  ftol: 1.0e-12
+  gtol: 1.0e-8
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/local_try_2

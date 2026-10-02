@@ -1,0 +1,88 @@
+name: stage2b_n16_theory_learning_comparison
+
+n_ip: [16]
+targets:
+  - name: pure-IP
+    kind: ip
+    beta: 1.0
+
+  - name: hybrid-rho0p5-w4
+    kind: ip_cosine
+    beta: 0.9587015128
+    w: 4
+    rho: 0.5
+  - name: hybrid-rho0p75-w4
+    kind: ip_cosine
+    beta: 0.9136310430
+    w: 4
+    rho: 0.75
+
+  - name: pure-cosine-w4
+    kind: count_cosine
+    beta: 1.6856526327
+    w: 4
+
+  - name: block-q4-L4
+    kind: block_ip
+    beta: 0.5009794329
+    block_count: 4
+  - name: block-q2-L8
+    kind: block_ip
+    beta: 0.7071121760
+    block_count: 2
+
+training_distribution: target
+sample_sizes: [262144]
+dataset_repetitions: 3
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+weight_bound: [8.0]
+
+models:
+  - kind: rbm
+    hidden: [560]
+    comparison_group: m3-064
+  - kind: 3rbm
+    hidden: [64]
+    pair_mode: cross
+    comparison_group: m3-064
+
+training_defaults:
+  updates: 50000
+  batch_size: 512
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 500
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [100, 250, 500, 1000, 2000, 5000, 10000, 20000, 35000, 50000]
+  ais_updates: []
+  save_parameters: true
+
+evaluation:
+  target_samples: 32768
+  pseudolikelihood_samples: 2048
+  exact_max_n: 0
+  ais_enabled: false
+
+  model_sample_chains: 256
+  model_sample_burn_in: 500
+  model_sample_rounds: 40
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_n16_theory_learning_comparison

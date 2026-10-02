@@ -1,0 +1,57 @@
+name: stage2b_ising_direct_control
+n_ip: [4, 8]
+targets:
+  - {name: energy-ring-ferro, kind: ising_energy, graph: ring, couplings: ferro, graph_seed: 11, encoding: direct, objective: smooth, beta: 1.0}
+  - {name: energy-overlap-ferro, kind: ising_energy, graph: ring_chords, couplings: ferro, graph_seed: 29, encoding: direct, objective: smooth, beta: 1.0}
+  - {name: energy-ladder-mixed, kind: ising_energy, graph: ladder, couplings: mixed, graph_seed: 11, encoding: direct, objective: smooth, beta: 1.0}
+  - {name: energy-overlap-mixed, kind: ising_energy, graph: ring_chords, couplings: mixed, graph_seed: 29, encoding: direct, objective: smooth, beta: 1.0}
+  - {name: ground-cycles, kind: ising_ground, graph: cycles, couplings: unit, graph_seed: 11, encoding: direct, objective: smooth, beta: 1.0}
+  - {name: ground-overlap, kind: ising_ground, graph: ring_chords, couplings: unit, graph_seed: 11, encoding: direct, objective: smooth, beta: 1.0}
+  - {name: ground-overlap-weighted, kind: ising_ground, graph: ring_chords, couplings: weighted, graph_seed: 11, encoding: direct, objective: smooth, beta: 1.0}
+  - {name: ground-overlap-threshold, kind: ising_ground, graph: ring_chords, couplings: unit, graph_seed: 11, encoding: direct, objective: threshold, beta: 1.0}
+sample_sizes: [262144]
+dataset_repetitions: 2
+data_seed: 9142026
+initialization_seed: 3812026
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_minibatches_across_training: true
+pair_evaluation_states_across_models: true
+device: auto
+dtype: float32
+weight_bound: [8.0]
+models:
+  - {kind: rbm, hidden: [132], n_ip: [4], comparison_group: matched}
+  - {kind: 3rbm, hidden: [32], pair_mode: all, n_ip: [4], comparison_group: matched}
+  - {kind: rbm, hidden: [516], n_ip: [8], comparison_group: matched}
+  - {kind: 3rbm, hidden: [64], pair_mode: all, n_ip: [8], comparison_group: matched}
+
+training_defaults:
+  updates: 50000
+  batch_size: 256
+  learning_rate: 0.002
+  optimizer: adam
+  record_every: 1000
+  gradient_clip_norm: 10.0
+training:
+  - {name: rbm-cd1, algorithm: cd, pair_modes: [none], gibbs_steps: 1}
+  - {name: rbm-cd2, algorithm: cd, pair_modes: [none], gibbs_steps: 2}
+  - {name: all-block4-cd1, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 1}
+  - {name: all-block4-cd2, algorithm: cd, pair_modes: [all], all_pairs_sampler: block, all_pairs_block_size: 4, gibbs_steps: 2}
+
+checkpoints:
+  updates: [250, 1000, 3000, 10000, 20000, 30000, 40000, 50000]
+  ais_updates: []
+  save_parameters: true
+evaluation:
+  target_samples: 16384
+  pseudolikelihood_samples: 2048
+  exact_max_n: 4
+  ais_enabled: false
+  model_sample_chains: 64
+  model_sample_burn_in: 100
+  model_sample_rounds: 10
+  model_sample_thinning: 5
+clean_output_dir: true
+output_dir: results/stage2b_ising_direct_control

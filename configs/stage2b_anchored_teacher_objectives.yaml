@@ -1,0 +1,105 @@
+name: stage2b_anchored_teacher_objectives
+
+n_ip: [8, 16]
+
+targets:
+  - name: anchors-only
+    kind: anchored_teacher
+    teacher_hidden_multiplier: 1.0
+    anchor_strength: 0.25
+    interaction_scale: 0.0
+    bias_span: 0.75
+    teacher_seed: 20260901
+
+  - name: anchored-g1p25
+    kind: anchored_teacher
+    teacher_hidden_multiplier: 1.0
+    anchor_strength: 0.25
+    interaction_scale: 1.25
+    bias_span: 0.75
+    teacher_seed: 20260901
+
+  - name: anchored-g1p75
+    kind: anchored_teacher
+    teacher_hidden_multiplier: 1.0
+    anchor_strength: 0.25
+    interaction_scale: 1.75
+    bias_span: 0.75
+    teacher_seed: 20260901
+
+  - name: anchored-g2p25
+    kind: anchored_teacher
+    teacher_hidden_multiplier: 1.0
+    anchor_strength: 0.25
+    interaction_scale: 2.25
+    bias_span: 0.75
+    teacher_seed: 20260901
+
+sample_sizes: [262144]
+dataset_repetitions: 3
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    n_ip: [8]
+    hidden: [76]
+    comparison_group: teacher-width
+  - kind: 3rbm
+    n_ip: [8]
+    hidden: [16]
+    pair_mode: cross
+    comparison_group: teacher-width
+
+  - kind: rbm
+    n_ip: [16]
+    hidden: [280]
+    comparison_group: teacher-width
+  - kind: 3rbm
+    n_ip: [16]
+    hidden: [32]
+    pair_mode: cross
+    comparison_group: teacher-width
+
+training_defaults:
+  updates: 50000
+  batch_size: 256
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 250
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [500, 2000, 10000, 25000, 50000]
+  ais_updates: [50000]
+  save_parameters: true
+
+evaluation:
+  target_samples: 8192
+  exact_max_n: 8
+  ais_enabled: true
+  ais_particles: 64
+  ais_intermediate: 500
+  ais_sweeps: 1
+  ais_repetitions: 2
+  model_sample_chains: 128
+  model_sample_burn_in: 200
+  model_sample_rounds: 20
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_anchored_teacher_objectives

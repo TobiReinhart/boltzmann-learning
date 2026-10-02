@@ -1,0 +1,66 @@
+name: stage2b_n46_algorithm_pilot
+
+n_ip: [4, 6]
+beta: [1.0]
+sample_sizes: [256, 1024, 4096]
+dataset_repetitions: 2
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+device: cpu
+dtype: float32
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    n_ip: [4]
+    hidden: [22]
+  - kind: 3rbm
+    n_ip: [4]
+    hidden: [8]
+    pair_mode: cross
+  - kind: rbm
+    n_ip: [6]
+    hidden: [30]
+  - kind: 3rbm
+    n_ip: [6]
+    hidden: [8]
+    pair_mode: cross
+
+training_defaults:
+  updates: 3000
+  batch_size: 128
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  persistent_chains: 128
+  record_every: 100
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1
+    algorithm: cd
+  - name: pcd1
+    algorithm: pcd
+  - name: tempered-pcd1
+    algorithm: tempered_pcd
+    tempering_replicas: 6
+    minimum_inverse_temperature: 0.0
+  - name: pseudolikelihood
+    algorithm: pseudolikelihood
+  - name: nce-uniform
+    algorithm: nce
+    nce_noise_ratio: 2
+
+evaluation:
+  target_samples: 4096
+  exact_max_n: 6
+  ais_enabled: false
+  model_sample_chains: 128
+  model_sample_burn_in: 100
+  model_sample_rounds: 20
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_n46_algorithm_pilot

@@ -1,0 +1,26 @@
+name: stage1_n6_unbounded_quickcheck
+
+n_ip: [6]
+beta: [1.0]
+
+weight_bound: [null]
+
+models:
+  - kind: rbm
+    hidden: [136]
+
+  - kind: 3rbm
+    hidden: [36]
+    pair_mode: cross
+
+optimization:
+  restarts: 10
+  random_scale: 0.1
+  maxiter: 10000
+  maxfun: 15000
+  ftol: 1.0e-12
+  gtol: 1.0e-8
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/stage1_n6_unbounded_quickcheck

@@ -1,0 +1,47 @@
+name: paper_study1_population
+study_type: population
+n_ip: [2, 4, 6]
+targets:
+  - {name: global-ip, kind: ip, beta: 1.0}
+  - {name: scaffold-ip, kind: ip_cosine, beta: 1.0, w: 4, rho: 0.5}
+  - {name: two-block-ip, kind: block_ip, beta: 0.7071067811865476, block_count: 2}
+weight_bound: [4.0]
+models:
+  - {kind: rbm, hidden: [9], n_ip: [2], comparison_group: P48}
+  - {kind: 3rbm, hidden: [4], pair_mode: all, n_ip: [2], comparison_group: P48}
+  - {kind: 3rbm, hidden: [5], pair_mode: cross, n_ip: [2], comparison_group: P48}
+  - {kind: rbm, hidden: [26], n_ip: [2], comparison_group: P136}
+  - {kind: 3rbm, hidden: [12], pair_mode: all, n_ip: [2], comparison_group: P136}
+  - {kind: 3rbm, hidden: [15], pair_mode: cross, n_ip: [2], comparison_group: P136}
+  - {kind: rbm, hidden: [79], n_ip: [2], comparison_group: P400}
+  - {kind: 3rbm, hidden: [36], pair_mode: all, n_ip: [2], comparison_group: P400}
+  - {kind: 3rbm, hidden: [44], pair_mode: cross, n_ip: [2], comparison_group: P400}
+  - {kind: rbm, hidden: [16], n_ip: [4], comparison_group: P156}
+  - {kind: 3rbm, hidden: [4], pair_mode: all, n_ip: [4], comparison_group: P156}
+  - {kind: 3rbm, hidden: [6], pair_mode: cross, n_ip: [4], comparison_group: P156}
+  - {kind: rbm, hidden: [49], n_ip: [4], comparison_group: P452}
+  - {kind: 3rbm, hidden: [12], pair_mode: all, n_ip: [4], comparison_group: P452}
+  - {kind: 3rbm, hidden: [18], pair_mode: cross, n_ip: [4], comparison_group: P452}
+  - {kind: rbm, hidden: [148], n_ip: [4], comparison_group: P1340}
+  - {kind: 3rbm, hidden: [36], pair_mode: all, n_ip: [4], comparison_group: P1340}
+  - {kind: 3rbm, hidden: [53], pair_mode: cross, n_ip: [4], comparison_group: P1340}
+  - {kind: rbm, hidden: [24], n_ip: [6], comparison_group: P328}
+  - {kind: 3rbm, hidden: [4], pair_mode: all, n_ip: [6], comparison_group: P328}
+  - {kind: 3rbm, hidden: [6], pair_mode: cross, n_ip: [6], comparison_group: P328}
+  - {kind: rbm, hidden: [73], n_ip: [6], comparison_group: P960}
+  - {kind: 3rbm, hidden: [12], pair_mode: all, n_ip: [6], comparison_group: P960}
+  - {kind: 3rbm, hidden: [19], pair_mode: cross, n_ip: [6], comparison_group: P960}
+  - {kind: rbm, hidden: [219], n_ip: [6], comparison_group: P2856}
+  - {kind: 3rbm, hidden: [36], pair_mode: all, n_ip: [6], comparison_group: P2856}
+  - {kind: 3rbm, hidden: [58], pair_mode: cross, n_ip: [6], comparison_group: P2856}
+optimization:
+  restarts: 5
+  random_scale: 0.25
+  maxiter: 3000
+  maxfun: 6000
+  ftol: 1.0e-13
+  gtol: 1.0e-9
+  seed: 914001
+cpu_threads: 2
+clean_output_dir: false
+output_dir: results/paper_study1_population

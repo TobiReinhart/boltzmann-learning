@@ -1,0 +1,77 @@
+name: stage2b_n16_large_architecture_smoke
+
+n_ip: [4]
+targets:
+  - name: pure-IP
+    kind: ip
+    beta: 1.0
+  - name: pure-cosine-w4
+    kind: count_cosine
+    beta: 1.0
+    w: 4
+  - name: block-q4-L1
+    kind: block_ip
+    beta: 1.0
+    block_count: 4
+  - name: block-q2-L2
+    kind: block_ip
+    beta: 1.0
+    block_count: 2
+
+training_distribution: target
+sample_sizes: [128]
+dataset_repetitions: 1
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+weight_bound: [2.0]
+
+models:
+  - kind: rbm
+    hidden: [8]
+    comparison_group: smoke-P82
+  - kind: 3rbm
+    hidden: [3]
+    pair_mode: cross
+    comparison_group: smoke-P82
+  - kind: 3rbm
+    hidden: [2]
+    pair_mode: all
+    comparison_group: smoke-P82
+
+training_defaults:
+  updates: 2
+  batch_size: 16
+  learning_rate: 0.002
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 1
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0002
+    algorithm: cd
+
+checkpoints:
+  updates: [1, 2]
+  ais_updates: []
+  save_parameters: true
+
+evaluation:
+  target_samples: 128
+  pseudolikelihood_samples: 64
+  exact_max_n: 4
+  ais_enabled: false
+  model_sample_chains: 16
+  model_sample_burn_in: 2
+  model_sample_rounds: 2
+  model_sample_thinning: 1
+
+clean_output_dir: true
+output_dir: results/stage2b_n16_large_architecture_smoke

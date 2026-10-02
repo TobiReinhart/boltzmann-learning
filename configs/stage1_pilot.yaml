@@ -1,0 +1,23 @@
+name: stage1_pilot
+
+n_ip: [2, 3, 4]
+beta: [0.25, 0.5, 1.0]
+weight_bound: [1.0, 2.0, 4.0]
+
+models:
+  - kind: rbm
+    hidden: [0, 1, 2, 4, 8, 16]
+  - kind: 3rbm
+    hidden: [0, 1, 2, 4, 8, 16]
+    pair_mode: cross
+
+optimization:
+  restarts: 25
+  random_scale: 0.25
+  maxiter: 1000
+  ftol: 1.0e-13
+  gtol: 1.0e-9
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/stage1_pilot

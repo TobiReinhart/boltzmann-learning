@@ -1,0 +1,25 @@
+name: stage1_size_scan_v1
+
+n_ip: [2, 3, 4, 5]
+
+beta: [1.0]
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    hidden: [0, 1, 2, 4, 8, 9, 16, 25, 32]
+
+  - kind: 3rbm
+    hidden: [0, 1, 2, 4, 8, 9, 16, 25, 32]
+    pair_mode: cross
+
+optimization:
+  restarts: 20
+  random_scale: 0.1
+  maxiter: 5000
+  ftol: 1.0e-13
+  gtol: 1.0e-8
+  seed: 1729
+
+clean_output_dir: true
+output_dir: results/stage1_size_scan_v1

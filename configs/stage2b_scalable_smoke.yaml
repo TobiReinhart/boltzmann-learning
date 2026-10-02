@@ -1,0 +1,55 @@
+name: stage2b_scalable_smoke
+
+n_ip: [2]
+beta: [1.0]
+sample_sizes: [64]
+dataset_repetitions: 1
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.01
+
+device: auto
+dtype: float32
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    hidden: [3]
+  - kind: 3rbm
+    hidden: [1]
+    pair_mode: cross
+
+training_defaults:
+  updates: 20
+  batch_size: 16
+  learning_rate: 0.01
+  optimizer: adam
+  gibbs_steps: 1
+  persistent_chains: 16
+  record_every: 5
+
+training:
+  - name: cd1
+    algorithm: cd
+  - name: pcd1
+    algorithm: pcd
+  - name: tempered-pcd1
+    algorithm: tempered_pcd
+    tempering_replicas: 4
+  - name: pseudolikelihood
+    algorithm: pseudolikelihood
+  - name: nce-uniform
+    algorithm: nce
+    nce_noise_ratio: 2
+
+evaluation:
+  target_samples: 256
+  exact_max_n: 6
+  ais_enabled: false
+  model_sample_chains: 32
+  model_sample_burn_in: 20
+  model_sample_rounds: 5
+  model_sample_thinning: 2
+
+clean_output_dir: true
+output_dir: results/stage2b_scalable_smoke

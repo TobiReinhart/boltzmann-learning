@@ -1,0 +1,68 @@
+name: stage2b_anchored_teacher_smoke
+
+n_ip: [2]
+targets:
+  - name: anchors-only
+    kind: anchored_teacher
+    teacher_hidden_multiplier: 1.0
+    anchor_strength: 0.25
+    interaction_scale: 0.0
+    bias_span: 0.75
+    teacher_seed: 20260901
+  - name: anchored-g1p75
+    kind: anchored_teacher
+    teacher_hidden_multiplier: 1.0
+    anchor_strength: 0.25
+    interaction_scale: 1.75
+    bias_span: 0.75
+    teacher_seed: 20260901
+
+sample_sizes: [32]
+dataset_repetitions: 1
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: cpu
+dtype: float32
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    hidden: [7]
+    comparison_group: teacher-width
+  - kind: 3rbm
+    hidden: [4]
+    pair_mode: cross
+    comparison_group: teacher-width
+
+training_defaults:
+  updates: 5
+  batch_size: 8
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 1
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [1, 5]
+  ais_updates: []
+  save_parameters: true
+
+evaluation:
+  target_samples: 32
+  exact_max_n: 2
+  ais_enabled: false
+  model_sample_chains: 8
+  model_sample_burn_in: 2
+  model_sample_rounds: 2
+  model_sample_thinning: 1
+
+clean_output_dir: true
+output_dir: results/stage2b_anchored_teacher_smoke

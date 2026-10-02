@@ -1,0 +1,109 @@
+name: stage2b_cd_scaling_resources
+
+n_ip: [8, 16, 32]
+beta: [1.0]
+sample_sizes: [16384, 65536, 262144]
+dataset_repetitions: 5
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+weight_bound: [4.0]
+
+models:
+  - kind: rbm
+    n_ip: [8]
+    hidden: [38]
+    comparison_group: small
+  - kind: 3rbm
+    n_ip: [8]
+    hidden: [8]
+    pair_mode: cross
+    comparison_group: small
+  - kind: rbm
+    n_ip: [8]
+    hidden: [76]
+    comparison_group: large
+  - kind: 3rbm
+    n_ip: [8]
+    hidden: [16]
+    pair_mode: cross
+    comparison_group: large
+
+  - kind: rbm
+    n_ip: [16]
+    hidden: [70]
+    comparison_group: small
+  - kind: 3rbm
+    n_ip: [16]
+    hidden: [8]
+    pair_mode: cross
+    comparison_group: small
+  - kind: rbm
+    n_ip: [16]
+    hidden: [140]
+    comparison_group: large
+  - kind: 3rbm
+    n_ip: [16]
+    hidden: [16]
+    pair_mode: cross
+    comparison_group: large
+
+  - kind: rbm
+    n_ip: [32]
+    hidden: [134]
+    comparison_group: small
+  - kind: 3rbm
+    n_ip: [32]
+    hidden: [8]
+    pair_mode: cross
+    comparison_group: small
+  - kind: rbm
+    n_ip: [32]
+    hidden: [268]
+    comparison_group: large
+  - kind: 3rbm
+    n_ip: [32]
+    hidden: [16]
+    pair_mode: cross
+    comparison_group: large
+
+training_defaults:
+  updates: 30000
+  batch_size: 128
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 250
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [250, 1000, 3000, 10000, 20000, 30000]
+  ais_updates: [3000, 10000, 30000]
+  save_parameters: true
+
+evaluation:
+  target_samples: 8192
+  exact_max_n: 8
+  ais_enabled: true
+  ais_particles: 128
+  ais_intermediate: 1000
+  ais_sweeps: 1
+  ais_repetitions: 2
+  model_sample_chains: 128
+  model_sample_burn_in: 200
+  model_sample_rounds: 20
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_cd_scaling_resources

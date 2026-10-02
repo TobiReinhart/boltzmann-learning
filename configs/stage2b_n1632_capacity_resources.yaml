@@ -1,0 +1,111 @@
+name: stage2b_n1632_capacity_resources
+
+n_ip: [16, 32]
+beta: [1.0]
+sample_sizes: [262144]
+dataset_repetitions: 3
+data_seed: 314159
+initialization_seed: 1729
+initialization_std: 0.05
+
+pair_initializations_across_training: true
+pair_minibatches_across_models: true
+pair_evaluation_states_across_models: true
+
+device: auto
+dtype: float32
+
+weight_bound: [8.0]
+
+models:
+  - kind: rbm
+    n_ip: [16]
+    hidden: [140]
+    comparison_group: baseline
+  - kind: 3rbm
+    n_ip: [16]
+    hidden: [16]
+    pair_mode: cross
+    comparison_group: baseline
+  - kind: rbm
+    n_ip: [16]
+    hidden: [560]
+    comparison_group: medium
+  - kind: 3rbm
+    n_ip: [16]
+    hidden: [64]
+    pair_mode: cross
+    comparison_group: medium
+  - kind: rbm
+    n_ip: [16]
+    hidden: [2242]
+    comparison_group: high
+  - kind: 3rbm
+    n_ip: [16]
+    hidden: [256]
+    pair_mode: cross
+    comparison_group: high
+
+  - kind: rbm
+    n_ip: [32]
+    hidden: [268]
+    comparison_group: baseline
+  - kind: 3rbm
+    n_ip: [32]
+    hidden: [16]
+    pair_mode: cross
+    comparison_group: baseline
+  - kind: rbm
+    n_ip: [32]
+    hidden: [1072]
+    comparison_group: medium
+  - kind: 3rbm
+    n_ip: [32]
+    hidden: [64]
+    pair_mode: cross
+    comparison_group: medium
+  - kind: rbm
+    n_ip: [32]
+    hidden: [4289]
+    comparison_group: high
+  - kind: 3rbm
+    n_ip: [32]
+    hidden: [256]
+    pair_mode: cross
+    comparison_group: high
+
+training_defaults:
+  updates: 100000
+  batch_size: 128
+  learning_rate: 0.005
+  optimizer: adam
+  gibbs_steps: 1
+  record_every: 500
+  gradient_clip_norm: 10.0
+
+training:
+  - name: cd1-lr0005
+    algorithm: cd
+
+checkpoints:
+  updates: [1000, 3000, 10000, 30000, 60000, 100000]
+  ais_updates: [100000]
+  save_parameters: true
+
+evaluation:
+  target_samples: 32768
+  exact_max_n: 0
+
+  ais_enabled: true
+  ais_particles: 512
+  ais_intermediate: 5000
+  ais_sweeps: 1
+  ais_repetitions: 3
+
+  model_sample_chains: 256
+  model_sample_burn_in: 500
+  model_sample_rounds: 40
+  model_sample_thinning: 5
+
+clean_output_dir: true
+output_dir: results/stage2b_n1632_capacity_resources
