@@ -3,17 +3,15 @@
 Python/PyTorch tools for studying how interaction structure affects learning
 in energy-based probabilistic models. The framework compares ordinary restricted
 Boltzmann machines (RBMs) with three-body RBMs (3RBMs), whose hidden units can
-also couple to pairs of visible variables.
+also couple to pairs of visible units in 3-body interactions.
 
 **Status:** research software accompanying a manuscript in preparation. This
-repository contains code and experiment definitions, not the manuscript, paper
-figures, saved experimental results or training datasets. A preprint link will be
-added when available. The numerical work does not establish a general learning
-complexity bound or certify globally optimal fits.
+repository contains code and experiment definitions. A preprint link will be
+added when available.
 
 ## What is implemented?
 
-- **Models:** RBMs and 3RBMs with cross-register or all-pairs visible interactions.
+- **Models:** RBMs and 3RBMs with cross-register or all 3-body interactions.
 - **Exact reference calculations:** population KL and finite-sample maximum
   likelihood with full enumeration and bounded SciPy L-BFGS-B optimization.
 - **Scalable learning:** CD-k, persistent CD, replica-exchange persistent CD,
@@ -43,10 +41,8 @@ uv run ip-rbm run-study configs/demo.yaml --dry-run
 uv run ip-rbm run-study configs/demo.yaml
 ```
 
-The demo trains a small parameter-matched RBM/3RBM pair on eight visible bits
-for 200 CD-2 updates each. It is intended as a quick workflow check, not a
-scientific test of architecture superiority. It requires neither downloaded
-data nor a GPU. Initial dependency installation can take longer than training.
+The demo trains a small parameter-matched RBM/3RBM pair on eight visible units
+for 200 CD-2 updates each. It is intended as a quick workflow check. It requires neither downloaded data nor a GPU. Initial dependency installation can take longer than training.
 
 Generated files appear under `results/demo/`, including `results.csv`,
 `checkpoints.csv`, model parameters and diagnostic PDFs. A nonempty output
@@ -59,8 +55,8 @@ uv run ip-rbm --help
 
 ## Experiment design and interpretation
 
-For `n_ip = n`, the visible vector contains **2n binary variables**, not n.
-An RBM has linear visible-hidden couplings; the 3RBM additionally has terms
+For `n_ip = n`, the visible vector contains **2n binary variables**.
+An RBM has linear visible-hidden couplings; the 3RBM additionally has 3-body terms
 `C[i,j,r] * v[i] * v[j] * h[r]`. Hidden units remain conditionally independent
 given visibles, but all-pairs 3RBM visibles do not factorize given hidden units.
 One CD-k step uses k complete hidden/visible sweeps, not k individual spin updates.
@@ -72,7 +68,7 @@ Small numerical RBM errors are attained fits, not certified approximation bounds
 
 The normalized energy diagnostic compares model and target log weights up to
 an additive constant on independent uniform probes. Zero is agreement and one
-is the flat-energy reference. It is **not KL**, and the probes are not guaranteed
+is the flat-energy reference. The probes are not guaranteed
 absent from the training observations. No minibatch-only normalization is used
 as a substitute for the model partition function.
 
